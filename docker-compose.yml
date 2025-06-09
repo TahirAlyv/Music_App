@@ -1,0 +1,104 @@
+﻿version: "3.8"
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: GateWay/Dockerfile
+    image: gateway-image
+    container_name: gateway
+    ports:
+      - "5000:8080"
+    networks:
+      - music-network
+
+  identityservice:
+    build:
+      context: .
+      dockerfile: IdentityService/Dockerfile
+    image: identity-image
+    container_name: identityservice
+    ports:
+      - "18002:80"
+    volumes: 
+      - identity_data:/app/identity_files
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=IdentityDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+    networks:
+      - music-network
+
+  # music-service:
+  #   build:
+  #     context: .
+  #     dockerfile: MusicService/Dockerfile
+  #   image: music-image
+  #   container_name: music-service
+  #   ports:
+  #     - "18003:80"
+  #   volumes:
+  #     - music_data:/app/music_files
+  #   depends_on:
+  #     - sqlserver
+  #     - rabbitmq
+  #   environment:
+  #     - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MusicDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+  #   networks:
+  #     - music-network
+
+  # favorites-service:
+  #   build:
+  #     context: .
+  #     dockerfile: FavoritesService/Dockerfile
+  #   image: favorites-image
+  #   container_name: favorites-service
+  #   depends_on:
+  #     - redis
+  #   environment:
+  #     - REDIS_HOST=redis
+  #   networks:
+  #     - music-network
+
+  # redis:
+  #   image: redis:alpine
+  #   container_name: redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - music-network
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   networks:
+  #     - music-network
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "YourStrong@Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - music-network
+
+volumes:
+  # music_data:
+  #   external: true
+  sql_data:
+    external: true
+  identity_data:
+    external: true
+   
+
+networks:
+  music-network:
+    driver: bridge
