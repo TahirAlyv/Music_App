@@ -29,23 +29,23 @@ services:
     networks:
       - music-network
 
-  # music-service:
-  #   build:
-  #     context: .
-  #     dockerfile: MusicService/Dockerfile
-  #   image: music-image
-  #   container_name: music-service
-  #   ports:
-  #     - "18003:80"
-  #   volumes:
-  #     - music_data:/app/music_files
-  #   depends_on:
-  #     - sqlserver
-  #     - rabbitmq
-  #   environment:
-  #     - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MusicDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
-  #   networks:
-  #     - music-network
+  music-service:
+    build:
+      context: .
+      dockerfile: MusicService/Dockerfile
+    image: music-image
+    container_name: music-service
+    ports:
+      - "18003:80"
+    volumes:
+      - music_data:/app/music_files
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MusicDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+    networks:
+      - music-network
 
   # favorites-service:
   #   build:
@@ -68,14 +68,14 @@ services:
   #   networks:
   #     - music-network
 
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   networks:
-  #     - music-network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - music-network
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -91,8 +91,8 @@ services:
       - music-network
 
 volumes:
-  # music_data:
-  #   external: true
+  music_data:
+    external: true
   sql_data:
     external: true
   identity_data:

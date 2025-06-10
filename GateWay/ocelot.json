@@ -23,7 +23,61 @@
         }
       ],
       "DownstreamPathTemplate": "/api/Auth/{userId}"
-    }
+    },
+
+
+    //MusicService
+    {
+      "UpstreamPathTemplate": "/api/Music/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "music-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Music/{everything}"
+    },
+    {
+      "UpstreamPathTemplate": "/api/Music/{userId}",
+      "UpstreamHttpMethod": [ "GET", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "music-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Music/{userId}"
+    },
+
+    //  //MusicService - PlayList
+    {
+      "UpstreamPathTemplate": "/api/Playlist/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "music-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Playlist/{everything}"
+    },
+    //{
+    //  "UpstreamPathTemplate": "/api/Playlist/{userId}",
+    //  "UpstreamHttpMethod": [ "GET", "DELETE" ],
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "music-service",
+    //      "Port": 80
+    //    }
+    //  ],
+    //  "DownstreamPathTemplate": "/api/Playlist/{userId}"
+    //}
+
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5000"
