@@ -1,0 +1,68 @@
+/* Tüm sayfayı kaplasın, dış boşluklar olmasın */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body için tam siyah arka plan */
+body {
+  background-color: #121212; /* daha koyu siyah */
+  font-family: Arial, sans-serif;
+}
+
+/* Sayfayı ortalamak için container */
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form kutusu */
+.login-form {
+  background-color: #1e1e1e;
+  padding: 30px 40px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 320px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+.login-form h2 {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.login-form input {
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  background-color: #2f2f2f;
+  color: white;
+  font-size: 14px;
+}
+
+.login-form input::placeholder {
+  color: #aaa;
+}
+
+.login-form button {
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.login-form button:hover {
+  background-color: #45a049;
+}

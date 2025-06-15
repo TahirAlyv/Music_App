@@ -13,16 +13,19 @@ namespace MusicService.Services.Concrete
 
         private readonly IBaseRepository<Playlist> _playlistRepository;
         private readonly IBaseRepository<PlaylistItem> _playlistItemRepository;
+        private readonly IBaseRepository<Music> _musicRepository;
 
-        public PlaylistService(IBaseRepository<Playlist> playlistRepository)
+        public PlaylistService(IBaseRepository<Playlist> playlistRepository, IBaseRepository<PlaylistItem> playlistItemRepository, IBaseRepository<Music> musicRepository)
         {
             _playlistRepository = playlistRepository;
+            _playlistItemRepository = playlistItemRepository;
+            _musicRepository = musicRepository;
         }
 
         public async Task<bool> AddMusicToPlaylistAsync(int playlistId, int musicId)
         {
             var playlist = await _playlistRepository.GetByIdAsync(playlistId);
-            var music = await _playlistRepository.GetByIdAsync(musicId);
+            var music = await _musicRepository.GetByIdAsync(musicId);
             if (playlist == null || music == null)
                 return false;
 
@@ -38,18 +41,25 @@ namespace MusicService.Services.Concrete
             return await _playlistItemRepository.SaveChangesAsync();
         }
 
-        public Task<bool> CreatePlaylistAsync(string playlistName, string userId)
+        public async Task<PlaylistDto> CreatePlaylistAsync(string playlistName, string userId)
         {
-
             var playlist = new Playlist
             {
                 Name = playlistName,
                 UserId = userId,
             };
 
-            _playlistRepository.AddAsync(playlist);
-            return _playlistRepository.SaveChangesAsync();
+            await _playlistRepository.AddAsync(playlist);
+            var result = await _playlistRepository.SaveChangesAsync();
 
+            if (!result)
+                return null!;
+
+            return new PlaylistDto
+            {
+                Id = playlist.Id,
+                Name = playlist.Name
+            };
         }
 
         public async Task<bool> DeletePlaylistAsync(int playlistId)
@@ -71,40 +81,33 @@ namespace MusicService.Services.Concrete
             if (playlistItems == null)
                 return Enumerable.Empty<MusicDto>();
 
-            var filtered = playlistItems
-                .Select(pi => new MusicDto
-                {
-                    Title = pi.Music.Title,
-                    FilePath = pi.Music.FilePath,
-                    UploadedByUserId = pi.Music.UploadedByUserId
-                });
+             var filtered = playlistItems
+                  .Select(pi => new MusicDto
+                  {
+                      Id = pi.Music.Id,
+                      Title = pi.Music.Title,
+                      Artist = pi.Music.Artist,
+                      Album = pi.Music.Album,
+                      Genre = pi.Music.Genre,
+                      CoverImagePath = pi.Music.CoverImagePath,
+                      FilePath = pi.Music.FilePath,
+                  });
 
             return filtered;
         }
 
-        public async Task<IEnumerable<PlaylistDto>> GetPlaylistsByUserIdAsync(string userId)
+        public async Task<List<PlaylistAndItemDto>> GetPlaylistsByUserIdAsync(string userId)
         {
-            var playlist = await _playlistRepository.GetAllWithIncludeAsync(p => p.Items);
+            var playlist = await _playlistRepository.GetPlaylistsWithItemsAndMusicAsync(userId);
 
-            if (playlist == null)
-                return null!;
-
-            var newPlaylist = playlist.Where(pl => pl.UserId == userId)
-                    .Select(p => new PlaylistDto
-                    {
-                        Name = p.Name,
-                        Items = p.Items
-                    });
-
-            return newPlaylist;
+            return playlist;
 
 
         }
 
         public async Task<bool> RemoveMusicFromPlaylistAsync(int playlistId, int musicId)
         {
-            var itemToRemove = await _playlistItemRepository.GetFirstOrDefaultAsync(
-                 pi => pi.PlaylistId == playlistId && pi.MusicId == musicId);
+            var itemToRemove = await _playlistItemRepository.GetFirstOrDefaultAsync(pi=> pi.PlaylistId==playlistId && pi.MusicId== musicId);
 
             if (itemToRemove == null)
                 return false;
@@ -112,6 +115,25 @@ namespace MusicService.Services.Concrete
             await _playlistItemRepository.DeleteAsync(itemToRemove);
             return await _playlistItemRepository.SaveChangesAsync();
 
+        }
+
+
+        public async Task<string> ChangePlaylistName(int id,string newName)
+        {
+            var playlists = await _playlistRepository.GetByIdAsync(id);
+
+            if (playlists == null)
+                return "Playlist not found";
+
+            playlists.Name = newName;
+
+            await _playlistRepository.UpdateAsync(playlists);
+            var result = await _playlistRepository.SaveChangesAsync();
+
+            if (!result)
+                return "Failed to update playlist name";
+
+            return $"Playlist name updated successfully; {newName}";
         }
     }
 }

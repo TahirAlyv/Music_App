@@ -18,6 +18,11 @@ namespace MusicService.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Album = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Artist = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CoverImagePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadedByUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false)

@@ -1,0 +1,15 @@
+# Gereksiz klasörler
+node_modules
+dist
+
+# Git & CI dosyaları
+.git
+.gitignore
+.vscode
+
+# Build ve docker dosyaları
+Dockerfile
+.dockerignore
+
+# Sistem dosyaları
+.DS_Store

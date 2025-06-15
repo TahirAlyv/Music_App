@@ -27,6 +27,16 @@ namespace IdentityService
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             // Add services to the container
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -39,9 +49,10 @@ namespace IdentityService
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseCors("AllowAll");
+            app.UseHttpsRedirection(); 
 
-            //app.UseHttpsRedirection(); // opsiyonel, devre d??? kalabilir
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 

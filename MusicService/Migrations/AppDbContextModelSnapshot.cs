@@ -30,8 +30,23 @@ namespace MusicService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Album")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Artist")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
+
                     b.Property<string>("FilePath")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Genre")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")

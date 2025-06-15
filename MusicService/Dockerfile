@@ -2,7 +2,10 @@
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+RUN mkdir -p /app/music_files && chown -R appuser:appgroup /app/music_files
+
+USER appuser
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081

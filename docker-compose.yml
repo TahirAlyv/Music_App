@@ -41,41 +41,40 @@ services:
       - music_data:/app/music_files
     depends_on:
       - sqlserver
-      - rabbitmq
     environment:
       - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=MusicDb;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
     networks:
       - music-network
 
-  # favorites-service:
-  #   build:
-  #     context: .
-  #     dockerfile: FavoritesService/Dockerfile
-  #   image: favorites-image
-  #   container_name: favorites-service
-  #   depends_on:
-  #     - redis
-  #   environment:
-  #     - REDIS_HOST=redis
-  #   networks:
-  #     - music-network
-
-  # redis:
-  #   image: redis:alpine
-  #   container_name: redis
-  #   ports:
-  #     - "6379:6379"
-  #   networks:
-  #     - music-network
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
+  favorites-service:
+    build:
+      context: .
+      dockerfile: Favorite-service/Dockerfile
+    image: favorites-image
+    container_name: favorites-service
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
     networks:
       - music-network
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - music-network
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   networks:
+  #     - music-network
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -89,6 +88,22 @@ services:
       - sql_data:/var/opt/mssql
     networks:
       - music-network
+
+  frontend:
+     build:
+       context: ./Frontend/my-app
+       dockerfile: Dockerfile
+     image: frontend-image
+     container_name: frontend
+     ports:
+       - "3000:80"
+     depends_on:
+       - music-service
+     networks:
+       - music-network
+  
+ 
+
 
 volumes:
   music_data:

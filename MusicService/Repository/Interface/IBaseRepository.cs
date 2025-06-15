@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using MusicService.Dtos;
+using System.Linq.Expressions;
 
 namespace MusicService.Repository.Interface
 {
@@ -15,7 +16,8 @@ namespace MusicService.Repository.Interface
             Expression<Func<T, bool>> predicate,
             Expression<Func<T, TProperty>> includeExpression);
         Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-
+        Task<List<PlaylistAndItemDto>> GetPlaylistsWithItemsAndMusicAsync(string userId);
+        Task<List<T>> GetManyAsync(Expression<Func<T, bool>> predicate);
     }
 
 }

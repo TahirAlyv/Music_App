@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using MusicService.Data;
 using MusicService.Repository.Concrete;
@@ -35,17 +36,17 @@ namespace MusicService
             })
                .AddJwtBearer(options =>
 {
-               options.TokenValidationParameters = new TokenValidationParameters
-            {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-            };
-            });
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+    };
+});
 
             builder.Services.AddScoped<IMusicService, MusiicService>();
             builder.Services.AddScoped<IPlaylistService, PlaylistService>();
@@ -76,12 +77,24 @@ namespace MusicService
             }
             app.UseCors("AllowAll");
 
-            app.UseHttpsRedirection();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+            Path.Combine(Directory.GetCurrentDirectory(), "music_files")
+            ),
+                RequestPath = "/files"
+            });
+
+
+            //app.UseHttpsRedirection();
+
+
+
 
             app.UseAuthentication();
 
             app.UseAuthorization();
-       
+
 
             app.MapControllers();
 

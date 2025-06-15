@@ -65,18 +65,34 @@
       ],
       "DownstreamPathTemplate": "/api/Playlist/{everything}"
     },
-    //{
-    //  "UpstreamPathTemplate": "/api/Playlist/{userId}",
-    //  "UpstreamHttpMethod": [ "GET", "DELETE" ],
-    //  "DownstreamScheme": "http",
-    //  "DownstreamHostAndPorts": [
-    //    {
-    //      "Host": "music-service",
-    //      "Port": 80
-    //    }
-    //  ],
-    //  "DownstreamPathTemplate": "/api/Playlist/{userId}"
-    //}
+
+    {
+      "UpstreamPathTemplate": "/files/{filePath}",
+      "UpstreamHttpMethod": [ "GET", "OPTIONS" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "music-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/files/{filePath}"
+    },
+
+    {
+      "UpstreamPathTemplate": "/api/favorite/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "favorites-service",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/favorite/{everything}"
+    }
+
+
 
   ],
   "GlobalConfiguration": {

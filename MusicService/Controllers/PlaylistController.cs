@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicService.Dtos;
+using MusicService.Models;
 using MusicService.Services.Interface;
 using System.Security.Claims;
 
@@ -40,10 +41,10 @@ namespace MusicService.Controllers
 
             var result = await _playlistService.CreatePlaylistAsync(playListName, userId);
 
-            if (!result)
+            if (result==null)
                 return BadRequest("Failed to create playlist");
 
-            return Ok("Playlist created successfully");
+            return Ok(result);
         }
 
 
@@ -74,16 +75,23 @@ namespace MusicService.Controllers
 
         public async Task<IActionResult> GetUserPlaylists()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Unauthorized("UserId not found in token");
-            var playlists = await _playlistService.GetPlaylistsByUserIdAsync(userId);
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null)
+                    return Unauthorized("UserId not found in token");
+                var playlists = await _playlistService.GetPlaylistsByUserIdAsync(userId);
 
-            if (playlists == null || !playlists.Any())
-                return NotFound("No playlists found for this user");
+                if (playlists == null)
+                    return NotFound("No playlists found for this user");
 
-            return Ok(playlists);
+                return Ok(playlists);
 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Server error: {ex.Message}");
+            }
         }
 
         [HttpGet("{playlistId}/musics")]
@@ -92,7 +100,7 @@ namespace MusicService.Controllers
             var musics = await _playlistService.GetMusicsInPlaylistAsync(playlistId);
             if (musics == null || !musics.Any())
                 return NotFound("No music found in this playlist");
-            return Ok(musics);
+            return Ok(musics); 
         }
 
 
@@ -105,9 +113,19 @@ namespace MusicService.Controllers
                 return BadRequest("Failed to delete playlist");
             return Ok("Playlist deleted successfully");
 
+        }
 
 
+        [HttpPost("rename")]
 
+        public async Task<IActionResult> PlayListEdit([FromBody] PlayListEditDto dto )
+        {
+            var result= await _playlistService.ChangePlaylistName (dto.PlaylistId,dto.PlaylistName);
+
+            if(string.IsNullOrEmpty(result))
+                return BadRequest("Failed to change playlist name");
+
+            return Ok(result);
         }
     }
 }

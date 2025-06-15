@@ -12,7 +12,7 @@ using MusicService.Data;
 namespace MusicService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250609234633_Init")]
+    [Migration("20250610225124_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -33,8 +33,23 @@ namespace MusicService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Album")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Artist")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoverImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
+
                     b.Property<string>("FilePath")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Genre")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
