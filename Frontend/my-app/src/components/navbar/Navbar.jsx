@@ -12,7 +12,7 @@ function Navbar() {
         color: 'white'
       }}
     >
-      {/* Sol taraf: Playlistlerim + Favorites */}
+ 
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <NavLink
           to="/mylist"
@@ -35,7 +35,7 @@ function Navbar() {
         </NavLink>
       </div>
 
-      {/* Orta: Arama inputu */}
+ 
       <div>
         <input
           type="text"
@@ -49,7 +49,7 @@ function Navbar() {
         />
       </div>
 
-      {/* Sağ taraf: Şarkı yükle ve profil */}
+ 
       <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
         <NavLink
           to="/upload"

@@ -11,8 +11,7 @@ function Favorites() {
   const BASE_URL = "http://localhost:5000";
   const token = localStorage.getItem("token");
 
-
-  // 1. Favori ID'leri al
+l
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
@@ -20,7 +19,7 @@ function Favorites() {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log(res.data)
-        setFavorites(res.data); // örn: [1, 5, 8]
+        setFavorites(res.data);  
       } catch (error) {
         console.error("Favoriler alınamadı:", error);
       }
@@ -31,7 +30,7 @@ function Favorites() {
     }
   }, [token]);
 
-  // 2. Favori ID'ler geldikten sonra, şarkıları getir
+
   useEffect(() => {
     const fetchSongsByIds = async () => {
       if (favorites.length === 0) return;

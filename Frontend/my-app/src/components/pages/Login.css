@@ -1,17 +1,17 @@
-/* Tüm sayfayı kaplasın, dış boşluklar olmasın */
+ 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body için tam siyah arka plan */
+ 
 body {
-  background-color: #121212; /* daha koyu siyah */
+  background-color: #121212; 
   font-family: Arial, sans-serif;
 }
 
-/* Sayfayı ortalamak için container */
+ 
 .login-container {
   height: 100vh;
   display: flex;
@@ -19,7 +19,7 @@ body {
   align-items: center;
 }
 
-/* Form kutusu */
+ 
 .login-form {
   background-color: #1e1e1e;
   padding: 30px 40px;
