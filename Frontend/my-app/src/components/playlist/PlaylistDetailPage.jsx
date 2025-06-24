@@ -59,7 +59,7 @@ const PlaylistDetailPage = () => {
       color: 'white',
       height: '100vh'
     }}>
-      {/* Left - Song List */}
+    
       <div style={{
         flex: 2,
         padding: '40px',
@@ -89,7 +89,7 @@ const PlaylistDetailPage = () => {
                   gap: '16px'
                 }}
               >
-                {/* Song Info */}
+       
                 <div
                   onClick={() => handleSongClick(song)}
                   style={{ cursor: 'pointer', flexGrow: 1 }}
@@ -102,7 +102,7 @@ const PlaylistDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Delete Button */}
+           
                 <button
                   onClick={() => handleDelete(song.id)}
                   style={{
@@ -125,7 +125,7 @@ const PlaylistDetailPage = () => {
         )}
       </div>
 
-      {/* Right - Selected Song */}
+ 
       <div style={{
         flex: 1,
         backgroundColor: '#12161c',

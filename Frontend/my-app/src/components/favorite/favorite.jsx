@@ -10,28 +10,20 @@ function Favorites() {
 
   const BASE_URL = "http://localhost:5000";
   const token = localStorage.getItem("token");
+  const userId = token ? JSON.parse(atob(token.split(".")[1])).nameid : null;
 
-l
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/favorite`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(res.data)
-        setFavorites(res.data);  
+        setFavorites(res.data);
       } catch (error) {
-        console.error("Favoriler alınamadı:", error);
+        console.error("Favorites could not be retrieved:", error);
       }
     };
 
-    if (token ) {
-      fetchFavorites();
-    }
-  }, [token]);
-
-
-  useEffect(() => {
     const fetchSongsByIds = async () => {
       if (favorites.length === 0) return;
       try {
@@ -41,13 +33,32 @@ l
           headers: { Authorization: `Bearer ${token}` },
         });
         setSongs(res.data);
-        console.log(res.data)
       } catch (error) {
-        console.error("Şarkılar getirilemedi:", error);
+        console.error("Favorites could not be retrieved:", error);
       }
     };
 
-    fetchSongsByIds();
+    if (token) {
+      fetchFavorites();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (favorites.length > 0) {
+      const fetchSongsByIds = async () => {
+        try {
+          const res = await axios.get(`${BASE_URL}/api/music/byids`, {
+            params: { musicIds: favorites },
+            paramsSerializer: params => new URLSearchParams(params).toString(),
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setSongs(res.data);
+        } catch (error) {
+          console.error("Favorites could not be retrieved:", error);
+        }
+      };
+      fetchSongsByIds();
+    }
   }, [favorites]);
 
   const handleSongClick = (song) => {
@@ -58,21 +69,27 @@ l
   const toggleFavorite = async (songId) => {
     try {
       if (favorites.includes(songId)) {
-        await axios.delete(`${BASE_URL}/api/favorite/remove?musicId=${songId}`, {
+        await axios.delete(`${BASE_URL}/api/favorite/remove`, {
+          params: { musicId: songId },
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites((prev) => prev.filter((id) => id !== songId));
         setSongs((prev) => prev.filter((s) => s.id !== songId));
+      } else {
+        await axios.post(`${BASE_URL}/api/favorite/add`, null, {
+          params: { musicId: songId },
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFavorites((prev) => [...prev, songId]);
       }
     } catch (error) {
-      console.error("Favori silme hatası:", error);
+      console.error("Favorite update error:", error);
     }
   };
 
   return (
     <div style={{ backgroundColor: "#1a1e23", color: "white", height: "100vh", width: "100vw", overflow: "hidden" }}>
       <Navbar />
-
       <div style={{ display: 'flex', height: 'calc(100vh - 60px)' }}>
         <div style={{ flex: 2, padding: '24px', overflowY: 'auto' }}>
           <h2 style={{ marginBottom: '16px' }}>Favorite Songs</h2>
@@ -114,12 +131,12 @@ l
                     background: "transparent",
                     border: "none",
                     fontSize: "20px",
-                    color: "red",
+                    color: favorites.includes(song.id) ? "red" : "#aaa",
                     cursor: "pointer",
                     marginLeft: "auto"
                   }}
                 >
-                  ❤️
+                  {favorites.includes(song.id) ? '❤️' : '🤍'}
                 </button>
               </div>
             ))}
