@@ -13,26 +13,14 @@ function Favorites() {
   const userId = token ? JSON.parse(atob(token.split(".")[1])).nameid : null;
 
   useEffect(() => {
+
     const fetchFavorites = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/api/favorite`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFavorites(res.data);
-      } catch (error) {
-        console.error("Favorites could not be retrieved:", error);
-      }
-    };
-
-    const fetchSongsByIds = async () => {
-      if (favorites.length === 0) return;
-      try {
-        const res = await axios.get(`${BASE_URL}/api/music/byids`, {
-          params: { musicIds: favorites },
-          paramsSerializer: params => new URLSearchParams(params).toString(),
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setSongs(res.data);
+        console.log("Favorites fetched:", res.data);
       } catch (error) {
         console.error("Favorites could not be retrieved:", error);
       }
@@ -43,23 +31,25 @@ function Favorites() {
     }
   }, [token]);
 
-  useEffect(() => {
-    if (favorites.length > 0) {
-      const fetchSongsByIds = async () => {
-        try {
-          const res = await axios.get(`${BASE_URL}/api/music/byids`, {
-            params: { musicIds: favorites },
-            paramsSerializer: params => new URLSearchParams(params).toString(),
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setSongs(res.data);
-        } catch (error) {
-          console.error("Favorites could not be retrieved:", error);
-        }
-      };
-      fetchSongsByIds();
-    }
-  }, [favorites]);
+useEffect(() => {
+  if (favorites.length > 0) {
+    const fetchSongsByIds = async () => {
+      try {
+        const query = favorites.map(id => `musicIds=${id}`).join("&");
+
+        const res = await axios.get(`${BASE_URL}/api/music/byids?${query}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setSongs(res.data);
+      } catch (error) {
+        console.error("Favorites could not be retrieved:", error);
+      }
+    };
+    fetchSongsByIds();
+  }
+}, [favorites]);
+
 
   const handleSongClick = (song) => {
     setSelectedSong(song);
